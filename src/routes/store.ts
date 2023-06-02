@@ -27,7 +27,7 @@ export interface Counter {
     const initialCounter: Counter = {
        cash: 100000,
        gamePhase: 0,
-       month: 1,
+       month: 0,
     };
  
     const { subscribe, set, update } =

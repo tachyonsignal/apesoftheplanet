@@ -7,6 +7,13 @@
     let tickerData;
     let day = 1;
 
+    let isWeekend;
+
+    $: {
+        const dayofWeek= (new Date(Date.UTC($counter.year, $counter.month, day))).getDay();
+        isWeekend = dayofWeek == 0 || dayofWeek == 6;
+    }
+
     function handleSubmit() {
         isLoadingData = true;
         const date = new Date(Date.UTC($counter.year, $counter.month, day));
@@ -16,9 +23,6 @@
             .then(json => {
                 tickerData = json;
 
-                if(tickerData.resultsCount == 0) {
-                    day++;
-                }
                 isLoadingData = false;
             }).catch(error => {
                 console.log(error);
@@ -56,32 +60,42 @@
         tickerData = undefined;
     }
 
-    function skip() {
+    function nextMonth() {
+        tickerData = undefined;
         counter.stepMonth();
         day = 1;
     }
+
+    function nextDay() {
+        tickerData = undefined;
+        day++;
+    }
 </script>
 <div>
-	<h1>Year: {$counter.year}</h1>
-    <h1>Month: {$counter.month}</h1>
-    <h1>Day: {day}</h1>
+	<h1>{$counter.year}/{$counter.month + 1}/{day}</h1>
+    <h1>Day of week: {isWeekend ? 'Weekend' : 'Weekday'}</h1>
+
     <h1>Cash: ${$counter.cash}</h1>
     {#if $counter.position}
         <h1>Position: {$counter.position.ticker} x {$counter.position.shares} </h1>
     {/if}
 
-    <form on:submit|preventDefault={handleSubmit}>
+ 
+      <form on:submit|preventDefault={handleSubmit}>
         <fieldset>
             <legend>Trade</legend>
-            <label>Stock Ticker</label>
-            <input type="text" bind:value={ticker} disabled={isLoadingData}/>
-            {#if ticker}
-                <button type=submit disabled={isLoadingData}>🚀 Lookup</button>
-            {/if}
-            {#if isLoadingData}
-                <div class="loader"></div> 
-            {/if}
-            {#if !!tickerData }
+            {#if isWeekend}
+                Market is closed on weekend.
+            {:else}
+                <label>Stock Ticker</label>
+                <input type="text" bind:value={ticker} disabled={isLoadingData}/>
+                {#if ticker}
+                    <button type=submit disabled={isLoadingData}>🚀 Lookup</button>
+                {/if}
+                {#if isLoadingData}
+                    <div class="loader"></div> 
+                {/if}
+                {#if !!tickerData }
                     {#if tickerData.results && tickerData.results.length > 0}
                     <dl>
                         <dt>Ticker</dt>
@@ -94,19 +108,20 @@
                         {#if $counter.position}
                             <button on:click={close}>Close Position</button>
                         {:else}
-                            <button on:click={buy}>Buy</button>
+                            <button on:click={buy}>Buy</button> 
                         {/if}
                     {:else}
-                    <br />
-                        Was not a trading day. Incremented day, now try again.
+                        <br />
+                            Was not a trading day. 
+                        {/if}
                     {/if}
-                {/if}
-
+            {/if}
         </fieldset>
       </form>
 
       <br /><br />
-      <button on:click={skip}>Skip to Month</button>
+      <button on:click={nextMonth}>Skip to next Month</button>
+      <button on:click={nextDay}>Skip to next day</button>
 </div>
 
 <style>
