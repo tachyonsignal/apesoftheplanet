@@ -9,6 +9,7 @@ export interface Counter {
  
  export interface AuthStore extends Readable<Counter> {
     beginGame: (year: number) => void;
+    deductBalance: (amount: number) => void;
     reset: () => void;
  }
  
@@ -24,6 +25,11 @@ export interface Counter {
  
     return {
        subscribe,
+       deductBalance: (amount: number) =>
+        update(({ cash, ...rest }) => ({
+          ...rest,
+          cash: cash - amount,
+       })),
        beginGame: (year: number) =>
           update(({ gamePhase, ...rest }) => ({
              ...rest,
