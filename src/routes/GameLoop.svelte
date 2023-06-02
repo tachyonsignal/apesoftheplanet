@@ -32,9 +32,9 @@
 
     function buy() {
         const high = tickerData.results[0].h;
-        const fillPrice = Math.ceil(high * 100) / 100 ;
+        const fillPrice = (Math.ceil(high * 100) / 100);
         const shares = Math.floor($counter.cash / fillPrice);
-        const cost = shares * fillPrice;
+        const cost = (shares * fillPrice);
         counter.deductBalance(cost);
         counter.setPosition({
             ticker: tickerData.ticker,
@@ -49,10 +49,11 @@
 
     function close() {
         const low = tickerData.results[0].l;
-        const fillPrice = Math.floor(low * 100 ) / 100;
-        const proceeds = $counter.position.shares * fillPrice;
+        const fillPrice = (Math.floor(low * 100 ) / 100);
+        const proceeds: number = $counter.position.shares * fillPrice;
         console.log(proceeds)
         counter.debitBalance(proceeds);
+        console.log($counter.cash)
         counter.closePosition();
         counter.stepMonth();
         day = 1;
@@ -72,12 +73,11 @@
     }
 </script>
 <div>
-	<h1>{$counter.year}/{$counter.month + 1}/{day}</h1>
-    <h1>Day of week: {isWeekend ? 'Weekend' : 'Weekday'}</h1>
+	<h1>⏰ {$counter.year}/{$counter.month + 1}/{day} ({isWeekend ? 'Weekend' : 'Weekday'})</h1>
 
-    <h1>Cash: ${$counter.cash}</h1>
+    <h1>💸 Cash: ${(new Number($counter.cash)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</h1>
     {#if $counter.position}
-        <h1>Position: {$counter.position.ticker} x {$counter.position.shares} </h1>
+        <h1>📈 Position: ${$counter.position.ticker} x {$counter.position.shares} shares </h1>
     {/if}
 
  
@@ -87,10 +87,18 @@
             {#if isWeekend}
                 Market is closed on weekend.
             {:else}
-                <label>Stock Ticker</label>
-                <input type="text" bind:value={ticker} disabled={isLoadingData}/>
+               
+                {#if $counter.position}
+                    You must first close your position in  ${$counter.position.ticker} before buying a different equity.<br/><br />
+                    <label>Stock Ticker</label>
+                    <input type="text" bind:value={$counter.position.ticker} disabled={true}/>
+                {:else}
+                        <label>Stock Ticker</label>
+                  <input type="text" bind:value={ticker} disabled={isLoadingData}/>
+                {/if}
+
                 {#if ticker}
-                    <button type=submit disabled={isLoadingData}>🚀 Lookup</button>
+                    <button type=submit disabled={isLoadingData}>Get Market Data 📈</button>
                 {/if}
                 {#if isLoadingData}
                     <div class="loader"></div> 
@@ -120,8 +128,8 @@
       </form>
 
       <br /><br />
-      <button on:click={nextMonth}>Skip to next Month</button>
-      <button on:click={nextDay}>Skip to next day</button>
+      <button on:click={nextMonth}>Skip to next Month 🌒</button><br /><br />
+      <button on:click={nextDay}>Skip to next day 🌞</button>
 </div>
 
 <style>

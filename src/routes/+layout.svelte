@@ -4,14 +4,14 @@
 </script>
 
 <div class="app">
-	<Header />
+	<!-- <Header /> -->
 
 	<main>
 		<slot />
 	</main>
 
 	<footer>
-		<p>produced by <a href="https://github.com/tachyonsignal">@tachyonsignal</a></p>
+		<!-- <p>produced by <a href="https://github.com/tachyonsignal">@tachyonsignal</a></p> -->
 	</footer>
 </div>
 

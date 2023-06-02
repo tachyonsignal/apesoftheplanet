@@ -14,7 +14,7 @@ export interface Counter {
  }
  
  export interface AuthStore extends Readable<Counter> {
-    beginGame: (year: number) => void;
+    beginGame: (year: number, month: number) => void;
     deductBalance: (amount: number) => void;
     debitBalance: (amount: number) => void;
     stepMonth: () => void;
@@ -45,10 +45,11 @@ export interface Counter {
              ...rest,
             cash: cash + amount,
         })),
-       beginGame: (year: number) =>
+       beginGame: (year: number, month: number) =>
           update(({ gamePhase, ...rest }) => ({
              ...rest,
              year: year,
+             month: month,
              gamePhase: gamePhase + 1
           })),
         stepMonth: () => 
