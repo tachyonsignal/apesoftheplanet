@@ -3,6 +3,7 @@ import { type Readable, writable } from 'svelte/store';
 export interface Counter {
     cash: number;
     year?: number;
+    month?: number;
     gamePhase: number;
  }
  
@@ -15,6 +16,7 @@ export interface Counter {
     const initialCounter: Counter = {
        cash: 100000,
        gamePhase: 0,
+       month: 1
     };
  
     const { subscribe, set, update } =

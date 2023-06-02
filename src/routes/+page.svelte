@@ -1,5 +1,7 @@
 <script>
 	import InitialYearPicker from './InitialYearPicker.svelte';
+	import GameLoop from './GameLoop.svelte';
+
 	import {counter} from './store';
 </script>
 
@@ -10,13 +12,10 @@
 
 <section>
 	{#if $counter.gamePhase == 0}
-		<h1>Hello Ape. Welcome to the present.</h1>
-		<h2>What year do you want to go back to?</h2>
 		<InitialYearPicker />
 	{/if}
 	{#if $counter.gamePhase == 1}
-		<h1>Year: {$counter.year}</h1>
-		<h1>Net worth: {$counter.cash}</h1>
+		<GameLoop/>
 	{/if}
 </section>
 
