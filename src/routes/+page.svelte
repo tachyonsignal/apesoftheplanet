@@ -1,7 +1,6 @@
 <script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+	import InitialYearPicker from './InitialYearPicker.svelte';
+	import {counter} from './store';
 </script>
 
 <svelte:head>
@@ -10,22 +9,15 @@
 </svelte:head>
 
 <section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
+	{#if $counter.gamePhase == 0}
+		<h1>Hello Ape. Welcome to the present.</h1>
+		<h2>What year do you want to go back to?</h2>
+		<InitialYearPicker />
+	{/if}
+	{#if $counter.gamePhase == 1}
+		<h1>Year: {$counter.year}</h1>
+		<h1>Net worth: {$counter.cash}</h1>
+	{/if}
 </section>
 
 <style>
@@ -39,21 +31,5 @@
 
 	h1 {
 		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
 	}
 </style>
