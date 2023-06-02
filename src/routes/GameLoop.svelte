@@ -31,16 +31,38 @@
         const fillPrice = Math.ceil(high * 100) / 100 ;
         const shares = Math.floor($counter.cash / fillPrice);
         const cost = shares * fillPrice;
-        console.log(shares);
         counter.deductBalance(cost);
+        counter.setPosition({
+            ticker: tickerData.ticker,
+            shares: shares
+        });
+        counter.stepMonth();
+
+
+        tickerData = undefined;
     }
+
+    function close() {
+        const low = tickerData.results[0].l;
+        const fillPrice = Math.floor(low * 100 ) / 100;
+        const proceeds = $counter.position.shares * fillPrice;
+        console.log(proceeds)
+        counter.debitBalance(proceeds);
+        counter.closePosition();
+        counter.stepMonth();
+
+        tickerData = undefined;
+    }
+
 </script>
 <div>
 	<h1>Year: {$counter.year}</h1>
     <h1>Month: {$counter.month}</h1>
     <h1>Day: {day}</h1>
-
-    <h1>Net worth: {$counter.cash}</h1>
+    <h1>Cash: ${$counter.cash}</h1>
+    {#if $counter.position}
+        <h1>Position: {$counter.position.ticker} x {$counter.position.shares} </h1>
+    {/if}
 
     <form class="content" on:submit|preventDefault={handleSubmit}>
         <label>Stock Ticker</label>
@@ -61,7 +83,11 @@
                 <dt>Low</dt>
                 <dd>{tickerData.results[0].l}</dd>
             </dl>
-            <button on:click={buy}>Buy</button>
+                {#if $counter.position}
+                    <button on:click={close}>Close Position</button>
+                {:else}
+                    <button on:click={buy}>Buy</button>
+                {/if}
             {:else}
                 Was not a trading day. Incremented day, now try again.
             {/if}

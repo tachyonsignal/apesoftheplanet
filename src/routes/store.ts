@@ -3,13 +3,23 @@ import { type Readable, writable } from 'svelte/store';
 export interface Counter {
     cash: number;
     year?: number;
-    month?: number;
+    month: number;
+    position?: Position;
     gamePhase: number;
+ }
+
+ export interface Position {
+    ticker: string;
+    shares: number;
  }
  
  export interface AuthStore extends Readable<Counter> {
     beginGame: (year: number) => void;
     deductBalance: (amount: number) => void;
+    debitBalance: (amount: number) => void;
+    stepMonth: () => void;
+    setPosition: (position: Position) => void;
+    closePosition: () => void;
     reset: () => void;
  }
  
@@ -17,7 +27,7 @@ export interface Counter {
     const initialCounter: Counter = {
        cash: 100000,
        gamePhase: 0,
-       month: 1
+       month: 1,
     };
  
     const { subscribe, set, update } =
@@ -30,12 +40,32 @@ export interface Counter {
           ...rest,
           cash: cash - amount,
        })),
+       debitBalance: (amount: number) =>
+        update(({ cash, ...rest }) => ({
+             ...rest,
+            cash: cash + amount,
+        })),
        beginGame: (year: number) =>
           update(({ gamePhase, ...rest }) => ({
              ...rest,
              year: year,
              gamePhase: gamePhase + 1
           })),
+        stepMonth: () => 
+            update(({ month, ...rest }) => ({
+                ...rest,
+                month: month + 1
+            })),
+        setPosition: (position: Position) => 
+            update(({ ...rest }) => ({
+                ...rest,
+                position: position
+            })),
+        closePosition: () => 
+            update(({ ...rest }) => ({
+                ...rest,
+                position: undefined
+            })),
        reset: () => set(initialCounter)
     };
  };
