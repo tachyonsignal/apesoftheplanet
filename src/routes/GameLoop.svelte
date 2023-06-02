@@ -37,6 +37,7 @@
             shares: shares
         });
         counter.stepMonth();
+        day = 1;
 
 
         tickerData = undefined;
@@ -50,10 +51,15 @@
         counter.debitBalance(proceeds);
         counter.closePosition();
         counter.stepMonth();
+        day = 1;
 
         tickerData = undefined;
     }
 
+    function skip() {
+        counter.stepMonth();
+        day = 1;
+    }
 </script>
 <div>
 	<h1>Year: {$counter.year}</h1>
@@ -64,35 +70,43 @@
         <h1>Position: {$counter.position.ticker} x {$counter.position.shares} </h1>
     {/if}
 
-    <form class="content" on:submit|preventDefault={handleSubmit}>
-        <label>Stock Ticker</label>
-        <input type="text" bind:value={ticker} disabled={isLoadingData}/>
-        {#if ticker}
-            <button type=submit disabled={isLoadingData}>🚀 Lookup</button>
-        {/if}
-        {#if isLoadingData}
-            <div class="loader"></div> 
-        {/if}
-        {#if !!tickerData }
-            {#if tickerData.results && tickerData.results.length > 0}
-            <dl>
-                <dt>Ticker</dt>
-                <dd>{tickerData.ticker}</dd>
-                <dt>High</dt>
-                <dd>{tickerData.results[0].h}</dd>
-                <dt>Low</dt>
-                <dd>{tickerData.results[0].l}</dd>
-            </dl>
-                {#if $counter.position}
-                    <button on:click={close}>Close Position</button>
-                {:else}
-                    <button on:click={buy}>Buy</button>
-                {/if}
-            {:else}
-                Was not a trading day. Incremented day, now try again.
+    <form on:submit|preventDefault={handleSubmit}>
+        <fieldset>
+            <legend>Trade</legend>
+            <label>Stock Ticker</label>
+            <input type="text" bind:value={ticker} disabled={isLoadingData}/>
+            {#if ticker}
+                <button type=submit disabled={isLoadingData}>🚀 Lookup</button>
             {/if}
-        {/if}
+            {#if isLoadingData}
+                <div class="loader"></div> 
+            {/if}
+            {#if !!tickerData }
+                    {#if tickerData.results && tickerData.results.length > 0}
+                    <dl>
+                        <dt>Ticker</dt>
+                        <dd>{tickerData.ticker}</dd>
+                        <dt>High</dt>
+                        <dd>{tickerData.results[0].h}</dd>
+                        <dt>Low</dt>
+                        <dd>{tickerData.results[0].l}</dd>
+                    </dl>
+                        {#if $counter.position}
+                            <button on:click={close}>Close Position</button>
+                        {:else}
+                            <button on:click={buy}>Buy</button>
+                        {/if}
+                    {:else}
+                    <br />
+                        Was not a trading day. Incremented day, now try again.
+                    {/if}
+                {/if}
+
+        </fieldset>
       </form>
+
+      <br /><br />
+      <button on:click={skip}>Skip to Month</button>
 </div>
 
 <style>
@@ -104,7 +118,6 @@
   height: 120px;
   animation: spin 2s linear infinite;
 }
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

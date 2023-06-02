@@ -52,10 +52,21 @@ export interface Counter {
              gamePhase: gamePhase + 1
           })),
         stepMonth: () => 
-            update(({ month, ...rest }) => ({
-                ...rest,
-                month: month + 1
-            })),
+            update(({ month, year,...rest }) => {
+            if(month == 11 ) {
+                return {
+                    ...rest,
+                    month: 0,
+                    year: year! + 1,
+                }
+            } else {
+                return {
+                    ...rest,
+                    month: month + 1,
+                    year: year
+                };
+            }
+        }),
         setPosition: (position: Position) => 
             update(({ ...rest }) => ({
                 ...rest,
